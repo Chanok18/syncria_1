@@ -1,0 +1,18 @@
+{
+  "Servers": {
+    "1": {
+      "Name": "Syncria Local",
+      "Group": "Syncria",
+      "Host": "postgres",
+      "Port": 5432,
+      "MaintenanceDB": "syncria_db",
+      "Username": "syncria_user",
+      "SSLMode": "prefer",
+      "PassFile": "/pgadmin4/pgpass",
+      "KerberosAuthentication": false,
+      "ConnectionParameters": {
+        "sslmode": "prefer"
+      }
+    }
+  }
+}

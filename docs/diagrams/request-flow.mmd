@@ -1,0 +1,88 @@
+sequenceDiagram
+    actor User as User (Browser)
+    participant React as React App
+    participant Zustand as Zustand Store
+    participant Axios as Axios Client
+    participant Spring as Spring Boot
+    participant Security as Spring Security
+    participant Controller as Controller
+    participant Service as Service
+    participant Repository as Repository
+    participant DB as PostgreSQL
+
+    Note over User, DB: Authentication Flow
+
+    User->>React: Enter credentials
+    React->>Zustand: login(email, password)
+    Zustand->>Axios: POST /api/v1/auth/login
+    Axios->>Spring: HTTP Request
+    Spring->>Security: Validate credentials
+    Security->>DB: Find user by email
+    DB-->>Security: User data
+    Security->>Security: Verify password (bcrypt)
+    Security-->>Spring: JWT Token
+    Spring-->>Axios: 200 OK + Token
+    Axios-->>Zustand: Auth Response
+    Zustand->>Zustand: Store token in localStorage
+    Zustand-->>React: Update auth state
+    React-->>User: Redirect to Dashboard
+
+    Note over User, DB: Create Client Flow
+
+    User->>React: Fill client form
+    React->>Zustand: createClient(data)
+    Zustand->>Axios: POST /api/v1/clients
+    Note right of Axios: Authorization: Bearer {token}
+    Axios->>Spring: HTTP Request
+    Spring->>Security: Validate JWT
+    Security->>Security: Extract companyId
+    Spring->>Controller: Handle request
+    Controller->>Controller: Validate DTO (@Valid)
+    Controller->>Service: createClient(dto)
+    Service->>Service: Business validations
+    Service->>Repository: save(client)
+    Repository->>DB: INSERT INTO clients
+    DB-->>Repository: Saved entity
+    Repository-->>Service: Client entity
+    Service-->>Controller: ClientResponseDTO
+    Controller-->>Axios: 201 Created
+    Axios-->>Zustand: Client data
+    Zustand->>Zustand: Update clients list
+    Zustand-->>React: Re-render
+    React-->>User: Show success message
+
+    Note over User, DB: Fetch Clients Flow
+
+    User->>React: Navigate to clients list
+    React->>Zustand: fetchClients(page, search)
+    Zustand->>Axios: GET /api/v1/clients?page=1&search=John
+    Axios->>Spring: HTTP Request
+    Spring->>Security: Validate JWT
+    Security->>Security: Extract companyId
+    Spring->>Controller: Handle request
+    Controller->>Service: getClients(page, search, companyId)
+    Service->>Repository: findByCompanyId(companyId, pageable)
+    Repository->>DB: SELECT * FROM clients WHERE company_id = ?
+    DB-->>Repository: Result set
+    Repository-->>Service: Page<Client>
+    Service-->>Controller: Page<ClientResponseDTO>
+    Controller-->>Axios: 200 OK + Paginated data
+    Axios-->>Zustand: Clients response
+    Zustand->>Zustand: Update state
+    Zustand-->>React: Re-render
+    React-->>User: Display clients table
+
+    Note over User, DB: Error Handling Flow
+
+    User->>React: Submit invalid form
+    React->>Zustand: createClient(invalidData)
+    Zustand->>Axios: POST /api/v1/clients
+    Axios->>Spring: HTTP Request
+    Spring->>Security: Validate JWT
+    Spring->>Controller: Handle request
+    Controller->>Controller: Validation fails
+    Controller-->>Axios: 400 Bad Request + Errors
+    Axios-->>Zustand: Error response
+    Zustand->>Zustand: Set error state
+    Zustand-->>React: Re-render with errors
+    React-->>User: Show validation errors

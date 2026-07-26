@@ -1,0 +1,87 @@
+graph TB
+    subgraph "Multi-Tenant Architecture"
+        subgraph "Tenant A: Vet Clinic"
+            UserA1[Dr. Carlos]
+            UserA2[Staff 1]
+            ClientA1[Client A1]
+            ClientA2[Client A2]
+            PetA1[Pet A1]
+            PetA2[Pet A2]
+            ApptA1[Appointment A1]
+        end
+        
+        subgraph "Tenant B: Dental Clinic"
+            UserB1[Dra. Ana]
+            UserB2[Staff 2]
+            ClientB1[Client B1]
+            ClientB2[Client B2]
+            PetB1[Patient B1]
+            PetB2[Patient B2]
+            ApptB1[Appointment B1]
+        end
+        
+        subgraph "Tenant C: Real Estate"
+            UserC1[María]
+            ClientC1[Client C1]
+            DealC1[Deal C1]
+        end
+    end
+
+    subgraph "Shared Infrastructure"
+        Backend[Spring Boot API]
+        PostgreSQL[(PostgreSQL)]
+        Flyway[Flyway Migrations]
+    end
+
+    subgraph "Tenant Isolation Layer"
+        TenantFilter[Tenant Filter]
+        TenantContext[TenantContext<br/>ThreadLocal]
+        CompanyIdExtractor[Company ID Extractor]
+    end
+
+    subgraph "Request Headers"
+        Header[Authorization Header]
+        XCompany[X-Company-Id Header]
+    end
+
+    UserA1 --> Header
+    UserB1 --> Header
+    UserC1 --> Header
+    
+    Header --> TenantFilter
+    XCompany --> TenantFilter
+    
+    TenantFilter --> TenantContext
+    TenantContext --> CompanyIdExtractor
+    
+    CompanyIdExtractor --> Backend
+    
+    Backend --> PostgreSQL
+    
+    subgraph "Data Isolation"
+        TableA[(company_id = 1)]
+        TableB[(company_id = 2)]
+        TableC[(company_id = 3)]
+    end
+
+    PostgreSQL --> TableA
+    PostgreSQL --> TableB
+    PostgreSQL --> TableC
+
+    UserA1 --> Backend
+    UserB1 --> Backend
+    UserC1 --> Backend
+
+    Backend --> ClientA1
+    Backend --> ClientB1
+    Backend --> ClientC1
+
+    ClientA1 --> PetA1
+    ClientA1 --> ApptA1
+    ClientB1 --> PetB1
+    ClientB1 --> ApptB1
+
+    style TenantFilter fill:#FF9800,color:white
+    style TenantContext fill:#4CAF50,color:white
+    style PostgreSQL fill:#9C27B0,color:white
+    style Backend fill:#2196F3,color:white

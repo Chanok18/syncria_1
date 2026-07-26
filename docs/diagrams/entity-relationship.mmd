@@ -1,0 +1,143 @@
+erDiagram
+    COMPANY ||--o{ USER : has
+    COMPANY ||--o{ CLIENT : has
+    COMPANY ||--o{ PET : has
+    COMPANY ||--o{ APPOINTMENT : has
+    
+    USER ||--o{ APPOINTMENT : creates
+    CLIENT ||--o{ PET : owns
+    CLIENT ||--o{ APPOINTMENT : schedules
+    PET ||--o{ APPOINTMENT : has
+
+    COMPANY {
+        bigint id PK
+        string name
+        string slug
+        string email
+        string phone
+        string address
+        string city
+        string country
+        string timezone
+        string locale
+        boolean active
+        datetime created_at
+        datetime updated_at
+        boolean is_deleted
+    }
+
+    USER {
+        bigint id PK
+        bigint company_id FK
+        string email
+        string password_hash
+        string first_name
+        string last_name
+        string role
+        boolean active
+        datetime last_login
+        datetime created_at
+        datetime updated_at
+        boolean is_deleted
+    }
+
+    CLIENT {
+        bigint id PK
+        bigint company_id FK
+        string first_name
+        string last_name
+        string email
+        string phone
+        string address
+        string city
+        string notes
+        boolean active
+        datetime created_at
+        datetime updated_at
+        boolean is_deleted
+    }
+
+    PET {
+        bigint id PK
+        bigint company_id FK
+        bigint client_id FK
+        string name
+        string species
+        string breed
+        string color
+        date birth_date
+        string gender
+        decimal weight
+        string microchip_number
+        string photo_url
+        text medical_notes
+        boolean active
+        datetime created_at
+        datetime updated_at
+        boolean is_deleted
+    }
+
+    APPOINTMENT {
+        bigint id PK
+        bigint company_id FK
+        bigint client_id FK
+        bigint pet_id FK
+        bigint user_id FK
+        datetime appointment_date
+        string appointment_time
+        string duration
+        string type
+        string status
+        string reason
+        text notes
+        text diagnosis
+        text treatment
+        decimal cost
+        boolean completed
+        datetime created_at
+        datetime updated_at
+        boolean is_deleted
+    }
+
+    INTERACTION {
+        bigint id PK
+        bigint company_id FK
+        bigint client_id FK
+        bigint user_id FK
+        string type
+        string channel
+        text subject
+        text content
+        datetime interaction_date
+        datetime created_at
+    }
+
+    CLIENT ||--o{ INTERACTION : has
+    USER ||--o{ INTERACTION : logs
+
+    %% Notes for relationships
+    COMPANY ||--o{ COMPANY_SETTINGS : configures
+    COMPANY_SETTINGS {
+        bigint id PK
+        bigint company_id FK
+        string key
+        string value
+        string description
+    }
+
+    %% Indexes suggestion
+    CLIENT {
+        index idx_client_company_email(company_id, email)
+        index idx_client_company_name(company_id, last_name)
+    }
+
+    PET {
+        index idx_pet_company_client(company_id, client_id)
+        index idx_pet_species_breed(species, breed)
+    }
+
+    APPOINTMENT {
+        index idx_appt_company_date(company_id, appointment_date)
+        index idx_appt_company_status(company_id, status)
+        index idx_appt_pet_date(pet_id, appointment_date)
+    }

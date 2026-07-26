@@ -1,0 +1,78 @@
+graph TB
+    subgraph "Clientes"
+        Browser[Browser<br/>React SPA]
+        Mobile[Mobile<br/>Future]
+        ThirdParty[Third Party<br/>API Consumers]
+    end
+
+    subgraph "Load Balancer"
+        Nginx[Nginx<br/>Reverse Proxy]
+    end
+
+    subgraph "Application Layer"
+        Backend[Spring Boot<br/>API Server]
+        
+        subgraph "Security"
+            JWT[JWT Auth]
+            CORS[CORS]
+            RateLimit[Rate Limiting]
+        end
+        
+        subgraph "Modules"
+            Auth[Auth Module]
+            Client[Client Module]
+            Pet[Pet Module]
+            Appointment[Appointment Module]
+            Dashboard[Dashboard Module]
+            Company[Company Module]
+        end
+        
+        subgraph "Shared"
+            BaseEntity[BaseEntity]
+            TenantCtx[TenantContext]
+            Exceptions[Exceptions]
+            Utils[Utils]
+        end
+    end
+
+    subgraph "Data Layer"
+        PostgreSQL[(PostgreSQL<br/>syncria_db)]
+        Flyway[Flyway<br/>Migrations]
+    end
+
+    subgraph "External Services"
+        OpenAI[OpenAI API]
+        Gemini[Gemini API]
+        n8n[n8n<br/>Automations]
+    end
+
+    Browser --> Nginx
+    Mobile --> Nginx
+    ThirdParty --> Nginx
+    
+    Nginx --> Backend
+    
+    Backend --> JWT
+    Backend --> CORS
+    Backend --> RateLimit
+    
+    JWT --> Auth
+    Auth --> Client
+    Auth --> Pet
+    Auth --> Appointment
+    
+    Client --> BaseEntity
+    Pet --> BaseEntity
+    Appointment --> BaseEntity
+    
+    Backend --> PostgreSQL
+    Backend --> Flyway
+    
+    Backend --> OpenAI
+    Backend --> Gemini
+    Backend --> n8n
+
+    style Browser fill:#4CAF50,color:white
+    style Backend fill:#2196F3,color:white
+    style PostgreSQL fill:#9C27B0,color:white
+    style Nginx fill:#FF9800,color:white

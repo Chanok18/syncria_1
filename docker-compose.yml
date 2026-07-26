@@ -1,0 +1,146 @@
+version: '3.8'
+
+# ====================
+# SYNCRIA - Docker Compose
+# ====================
+# Desarrollo local con todos los servicios
+# Uso: docker-compose up -d
+# Parar: docker-compose down
+# Logs: docker-compose logs -f [servicio]
+
+services:
+  # --------------------
+  # PostgreSQL Database
+  # --------------------
+  postgres:
+    image: postgres:16-alpine
+    container_name: syncria-postgres
+    restart: unless-stopped
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-syncria_db}
+      POSTGRES_USER: ${POSTGRES_USER:-syncria_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-secret}
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - syncria-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-syncria_user} -d ${POSTGRES_DB:-syncria_db}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  # --------------------
+  # PGAdmin - Database UI
+  # --------------------
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: syncria-pgadmin
+    restart: unless-stopped
+    ports:
+      - "${PGADMIN_PORT:-5050}:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-admin@syncria.com}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+      - ./docker/pgadmin/servers.json:/pgadmin4/servers.json
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - syncria-network
+
+  # --------------------
+  # Backend - Spring Boot
+  # --------------------
+  # Descomentar cuando el backend esté listo
+  # backend:
+  #   build:
+  #     context: ./backend
+  #     dockerfile: Dockerfile
+  #   container_name: syncria-backend
+  #   restart: unless-stopped
+  #   ports:
+  #     - "${BACKEND_PORT:-8080}:8080"
+  #   environment:
+  #     SPRING_PROFILES_ACTIVE: docker
+  #     DATABASE_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-syncria_db}
+  #     DATABASE_USERNAME: ${POSTGRES_USER:-syncria_user}
+  #     DATABASE_PASSWORD: ${POSTGRES_PASSWORD:-secret}
+  #     JWT_SECRET: ${JWT_SECRET:-your-secret-key}
+  #   depends_on:
+  #     postgres:
+  #       condition: service_healthy
+  #   networks:
+  #     - syncria-network
+
+  # --------------------
+  # Frontend - React
+  # --------------------
+  # Descomentar cuando el frontend esté listo
+  # frontend:
+  #   build:
+  #     context: ./frontend
+  #     dockerfile: Dockerfile
+  #   container_name: syncria-frontend
+  #   restart: unless-stopped
+  #   ports:
+  #     - "${FRONTEND_PORT:-5173}:5173"
+  #   environment:
+  #     VITE_API_URL: http://localhost:8080
+  #   depends_on:
+  #     - backend
+  #   networks:
+  #     - syncria-network
+
+  # --------------------
+  # n8n - Automations
+  # --------------------
+  n8n:
+    image: n8nio/n8n:latest
+    container_name: syncria-n8n
+    restart: unless-stopped
+    ports:
+      - "${N8N_PORT:-5678}:5678"
+    environment:
+      N8N_BASIC_AUTH_ACTIVE: 'true'
+      N8N_BASIC_AUTH_USER: ${N8N_USER:-admin}
+      N8N_BASIC_AUTH_PASSWORD: ${N8N_PASSWORD:-admin}
+      DB_TYPE: postgresdb
+      DB_POSTGRESDB_HOST: postgres
+      DB_POSTGRESDB_PORT: 5432
+      DB_POSTGRESDB_DATABASE: ${POSTGRES_DB:-syncria_db}
+      DB_POSTGRESDB_USER: ${POSTGRES_USER:-syncria_user}
+      DB_POSTGRESDB_PASSWORD: ${POSTGRES_PASSWORD:-secret}
+    volumes:
+      - n8n_data:/home/node/.n8n
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - syncria-network
+
+# --------------------
+# Volumes
+# --------------------
+volumes:
+  postgres_data:
+    driver: local
+  pgadmin_data:
+    driver: local
+  n8n_data:
+    driver: local
+
+# --------------------
+# Networks
+# --------------------
+networks:
+  syncria-network:
+    driver: bridge
