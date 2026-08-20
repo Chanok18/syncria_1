@@ -1,39 +1,36 @@
+import { NavLink } from 'react-router-dom'
+
 export default function Sidebar() {
+  const linkClass = ({ isActive }: { isActive: boolean }) =>
+    `block px-4 py-2 rounded-md transition-colors ${
+      isActive
+        ? 'bg-primary-50 text-primary-700 font-medium'
+        : 'text-gray-700 hover:bg-primary-50'
+    }`
+
   return (
     <aside className="w-64 bg-white border-r border-gray-200 min-h-[calc(100vh-64px)]">
       <nav className="p-4">
         <ul className="space-y-2">
           <li>
-            <a
-              href="/"
-              className="block px-4 py-2 text-gray-700 hover:bg-primary-50 rounded-md"
-            >
-              Inicio
-            </a>
+            <NavLink to="/" end className={linkClass}>
+              Dashboard
+            </NavLink>
           </li>
           <li>
-            <a
-              href="/clients"
-              className="block px-4 py-2 text-gray-700 hover:bg-primary-50 rounded-md"
-            >
-              Clientes
-            </a>
+            <NavLink to="/contacts" className={linkClass}>
+              Contacts
+            </NavLink>
           </li>
           <li>
-            <a
-              href="/pets"
-              className="block px-4 py-2 text-gray-700 hover:bg-primary-50 rounded-md"
-            >
+            <NavLink to="/pets" className={linkClass}>
               Mascotas
-            </a>
+            </NavLink>
           </li>
           <li>
-            <a
-              href="/appointments"
-              className="block px-4 py-2 text-gray-700 hover:bg-primary-50 rounded-md"
-            >
+            <NavLink to="/appointments" className={linkClass}>
               Citas
-            </a>
+            </NavLink>
           </li>
         </ul>
       </nav>

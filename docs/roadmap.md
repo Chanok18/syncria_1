@@ -1,11 +1,11 @@
 # Roadmap de Desarrollo - Syncria
 
-## Visión General
+## Vision General
 
 ```
-Fase 0: Product Discovery    ← ESTAMOS AQUÍ
-Fase 1: System Architecture
-Fase 2: MVP Development (Sprints 1-5)
+Fase 0: Product Discovery    ← Completado
+Fase 1: System Architecture  ← Completado
+Fase 2: MVP Development      ← EN PROGRESO (Sprint 5 completado, Sprint 6 activo)
 Fase 3: Beta Testing
 Fase 4: Launch
 Fase 5: Growth & Iteration
@@ -14,192 +14,157 @@ Fase 5: Growth & Iteration
 ## Calendario de Sprints
 
 ### Fase 0: Product Discovery (Semanas 1-2)
-**Estado**: En Progreso
+**Estado**: Completado
 
 | Semana | Entregable | Estado |
-|--------|------------|--------|
-| 1 | Visión del producto | ✅ Completado |
-| 1 | Definición MVP | ✅ Completado |
-| 2 | Product Backlog | ✅ Completado |
-| 2 | Historias de Usuario | ✅ Completado |
-| 2 | Roadmap | 🔄 En Progreso |
+|--------| Vision del producto | Completado |
+| 1 | Definicion MVP | Completado |
+| 2 | Product Backlog | Completado |
+| 2 | Historias de Usuario | Completado |
+| 2 | Roadmap | Completado |
 
 ### Fase 1: System Architecture (Semanas 3-4)
-**Estado**: Pendiente
+**Estado**: Completado
 
 | Semana | Entregable | Estado |
-|--------|------------|--------|
-| 3 | Arquitectura general | ⏳ Pendiente |
-| 3 | Diagramas de arquitectura | ⏳ Pendiente |
-| 4 | ADRs (Architecture Decision Records) | ⏳ Pendiente |
-| 4 | Modelo de dominio | ⏳ Pendiente |
+|--------| Arquitectura general | Completado |
+| 3 | Diagramas de arquitectura | Completado |
+| 4 | ADRs (Architecture Decision Records) | Completado |
+| 4 | Modelo de dominio | Completado |
 
 ### Fase 2: MVP Development (Semanas 5-14)
 
 #### Sprint 1: Setup (Semanas 5-6)
 **Objetivo**: Infraestructura base del proyecto
-
-| Día | Tarea | Estimación |
-|-----|-------|------------|
-| 1-2 | Configurar repositorio Git | 2h |
-| 1-2 | Configurar Git Flow | 1h |
-| 3-4 | Docker Compose (PostgreSQL, pgAdmin) | 4h |
-| 5-6 | Backend Spring Boot setup | 6h |
-| 7-8 | Frontend React + Vite setup | 4h |
-| 9-10 | Configurar linting, testing, cobertura | 4h |
-
-**Entregables**:
-- Repositorio con Git Flow
-- Docker Compose funcionando
-- Backend: Spring Boot + PostgreSQL + Flyway
-- Frontend: React + TypeScript + Vite + Tailwind
-- CI básico (lint, test, build)
-
-**Puntos**: 8
+**Estado**: Completado (v0.1.0)
 
 ---
 
-#### Sprint 2: Clientes (Semanas 7-8)
-**Objetivo**: CRUD completo de clientes
-
-| Historia | Puntos | Días |
-|----------|--------|------|
-| US-003: Crear Cliente | 5 | 2.5 |
-| US-004: Listar Clientes | 5 | 2.5 |
-| US-005: Editar Cliente | 3 | 1.5 |
-| US-006: Eliminar Cliente | 2 | 1 |
-| Tests y fixes | - | 2 |
-
-**Entregables**:
-- API REST de clientes completa
-- UI de clientes completa
-- Tests unitarios y de integración
-- Documentación de API
-
-**Puntos**: 15
+#### Sprint 2: Autenticacion (Semanas 7-8)
+**Objetivo**: Sistema completo de autenticacion
+**Estado**: Completado (v0.2.0)
 
 ---
 
-#### Sprint 3: Mascotas (Semanas 9-10)
-**Objetivo**: Gestión de mascotas vinculadas a clientes
-
-| Historia | Puntos | Días |
-|----------|--------|------|
-| US-007: Registrar Mascota | 5 | 2.5 |
-| US-008: Ver Mascotas del Cliente | 3 | 1.5 |
-| Tests y fixes | - | 2 |
-
-**Entregables**:
-- API REST de mascotas
-- UI de mascotas integrada con clientes
-- Upload de fotos
-- Tests completos
-
-**Puntos**: 8
+#### Sprint 2.1: Hardening (Semanas 9)
+**Objetivo**: Resolver tech debt critico
+**Estado**: Completado (v0.2.1)
 
 ---
 
-#### Sprint 4: Citas (Semanas 11-12)
-**Objetivo**: Sistema de citas y calendario
+#### Sprint 3: Contactos (Semanas 9-10)
+**Objetivo**: CRUD completo de contactos
+**Estado**: Completado (v0.3.0)
 
-| Historia | Puntos | Días |
-|----------|--------|------|
-| US-009: Crear Cita | 8 | 4 |
-| US-010: Ver Calendario | 8 | 4 |
-| US-011: Editar/Cancelar Cita | 3 | 1.5 |
-| Tests y fixes | - | 2.5 |
-
-**Entregables**:
-- API REST de citas
-- Calendario visual interactivo
-- Validación de conflictos
-- Tests completos
-
-**Puntos**: 19
+| Historia | Puntos | Estado |
+|----------|--------|--------|
+| US-003: Crear Contacto | 5 | Completado |
+| US-004: Listar Contactos | 5 | Completado |
+| US-005: Editar Contacto | 3 | Completado |
+| US-006: Eliminar Contacto | 2 | Completado |
 
 ---
 
-#### Sprint 5: Dashboard y Pulido (Semanas 13-14)
-**Objetivo**: Dashboard y preparación para beta
+#### Sprint 4: Mascotas (Semanas 11-12)
+**Objetivo**: Gestion de mascotas vinculadas a contactos
+**Estado**: Completado (v0.4.0)
 
-| Historia | Puntos | Días |
-|----------|--------|------|
-| US-012: Ver Dashboard | 5 | 2.5 |
-| Pulido de UI/UX | - | 2 |
-| Tests E2E | - | 2 |
-| Bug fixes | - | 1.5 |
-
-**Entregables**:
-- Dashboard con métricas
-- UI pulida y consistente
-- Tests E2E críticos
-- Beta lista
-
-**Puntos**: 5
+| Historia | Puntos | Estado |
+|----------|--------|--------|
+| US-007: Registrar Mascota | 5 | Completado |
+| US-008: Ver Mascotas del Contacto | 3 | Completado |
 
 ---
 
-### Fase 3: Beta Testing (Semanas 15-18)
+#### Sprint 5: Citas (Semanas 13-14)
+**Objetivo**: Sistema de citas con calendario visual
+**Estado**: Completado (v0.5.0)
+
+| Historia | Puntos | Estado |
+|----------|--------|--------|
+| US-009: Crear Cita | 8 | Completado |
+| US-010: Ver Calendario | 8 | Completado |
+| US-011: Editar/Cancelar Cita | 3 | Completado |
+
+---
+
+#### Sprint 6: Dashboard (Semana 15)
+**Objetivo**: Dashboard y pulido final del MVP
+**Estado**: EN PROGRESO (v0.6.0)
+
+| Historia | Puntos | Estado |
+|----------|--------|--------|
+| US-012: Ver Dashboard | 5 | En Progreso |
+
+---
+
+### Fase 3: Beta Testing (Semanas 16-19)
 
 | Semana | Actividad |
 |--------|-----------|
-| 15 | Beta cerrada (20 usuarios) |
-| 16 | Recolección de feedback |
-| 17 | Iteración y fixes |
-| 18 | Preparación para launch |
+| 16 | Beta cerrada (20 usuarios) |
+| 17 | Recoleccion de feedback |
+| 18 | Iteracion y fixes |
+| 19 | Preparacion para launch |
 
-### Fase 4: Launch (Semana 19)
+### Fase 4: Launch (Semana 20)
 
 | Actividad | Fecha Objetivo |
 |-----------|----------------|
-| Launch público | Semana 19 |
-| Marketing launch | Semana 19 |
-| Onboarding de early adopters | Semanas 19-20 |
+| Launch publico | Semana 20 |
+| Marketing launch | Semana 20 |
+| Onboarding de early adopters | Semanas 20-21 |
 
-### Fase 5: Growth & Iteration (Semanas 20+)
+### Fase 5: Growth & Iteration (Semana 21+)
 
 | Trimestre | Objetivo |
 |-----------|----------|
-| Q3 2026 | Alcanzar 50 usuarios activos |
-| Q4 2026 | Expandir a clínicas dentales |
-| Q1 2027 | Alcanzar 500 usuarios |
-| Q2 2027 | Expandir a inmobiliarias |
+| Q4 2026 | Alcanzar 50 usuarios activos |
+| Q1 2027 | Expandir a clinicas dentales |
+| Q2 2027 | Alcanzar 500 usuarios |
 
 ---
 
 ## Resumen de Sprints
 
 ```
-Sprint 1 (Sem 5-6):  Setup           │████░░░░░░░░░░░░░░░░│ 8 pts
-Sprint 2 (Sem 7-8):  Clientes        │████████████░░░░░░░░│ 15 pts
-Sprint 3 (Sem 9-10): Mascotas        │███████░░░░░░░░░░░░░│ 8 pts
-Sprint 4 (Sem 11-12): Citas          │███████████████░░░░░│ 19 pts
-Sprint 5 (Sem 13-14): Dashboard      │████░░░░░░░░░░░░░░░░│ 5 pts
-                                     Total: 55 pts
+Sprint 1 (v0.1.0):  Setup           │████████████████████│ Completado (8 pts)
+Sprint 2 (v0.2.0):  Autenticacion   │████████████████████│ Completado (8 pts)
+Sprint 2.1(v0.2.1): Hardening       │████████████████████│ Completado (~12 pts)
+Sprint 3 (v0.3.0):  Contactos       │████████████████████│ Completado (15 pts)
+Sprint 4 (v0.4.0):  Mascotas        │████████████████████│ Completado (8 pts)
+Sprint 5 (v0.5.0):  Citas           │████████████████████│ Completado (19 pts)
+Sprint 6 (v0.6.0):  Dashboard       │░░░░░░░░░░░░░░░░░░░░│ En Progreso (5 pts)
+                                    Total: 75 pts (60 completados)
 ```
 
 ## Hitos Clave
 
 | Hito | Fecha Objetivo | Estado |
 |------|----------------|--------|
-| Documentación completa | Semana 2 | 🔄 En Progreso |
-| Arquitectura definida | Semana 4 | ⏳ Pendiente |
-| Backend funcional | Semana 10 | ⏳ Pendiente |
-| Frontend funcional | Semana 12 | ⏳ Pendiente |
-| MVP completo | Semana 14 | ⏳ Pendiente |
-| Beta cerrada | Semana 15 | ⏳ Pendiente |
-| Launch público | Semana 19 | ⏳ Pendiente |
+| Documentacion completa | Semana 2 | Completado |
+| Arquitectura definida | Semana 4 | Completado |
+| Infraestructura base | Semana 6 | Completado |
+| Autenticacion | Semana 8 | Completado |
+| Hardening | Semana 9 | Completado |
+| Contactos | Semana 10 | Completado |
+| Mascotas | Semana 12 | Completado |
+| Citas | Semana 14 | Completado |
+| Dashboard | Semana 15 | En Progreso |
+| MVP completo | Semana 15 | Pendiente |
+| Beta cerrada | Semana 19 | Pendiente |
+| Launch publico | Semana 20 | Pendiente |
 
 ## Riesgos y Mitigaciones
 
-| Riesgo | Probabilidad | Impacto | Mitigación |
+| Riesgo | Probabilidad | Impacto | Mitigacion |
 |--------|--------------|---------|------------|
 | Scope creep | Alta | Alto | Seguir MVP estrictamente |
-| Tecnología nueva | Media | Medio | Investigar antes de implementar |
+| Tecnologia nueva | Media | Medio | Investigar antes de implementar |
 | Falta de tiempo | Alta | Alto | Priorizar, no todo es Must Have |
 | Cambios de requisitos | Media | Medio | Documentar bien, ADRs |
 
 ---
 
-*Roadmap - Syncria v1.0*
-*Última actualización: 2026*
+*Roadmap - Syncria v0.5.0*
+*Ultima actualizacion: 2026-07-30*

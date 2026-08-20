@@ -16,7 +16,7 @@ public class HealthController {
         return ResponseEntity.ok(Map.of(
                 "status", "UP",
                 "project", "Syncria",
-                "version", "0.1.0"
+                "version", "0.2.0"
         ));
     }
 }

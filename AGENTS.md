@@ -6,7 +6,7 @@ Plataforma CRM inteligente y modular, preparada para evolucionar a SaaS multi-te
 
 | Capa | Tecnología |
 |------|------------|
-| Backend | Java 21 + Spring Boot 3.x + Maven |
+| Backend | Java 17 + Spring Boot 3.x + Maven |
 | Frontend | React + TypeScript + Vite + TailwindCSS |
 | Base de datos | PostgreSQL 16 + H2 (test unitario) |
 | Migraciones | Flyway |

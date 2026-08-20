@@ -12,3 +12,8 @@ spring:
 
   flyway:
     enabled: true
+
+app:
+  jwt:
+    secret: ZGV2LW9ubHktand0LXNlY3JldC1mb3ItbG9jYWwtZGV2ZWxvcG1lbnQtcHVycG9zZXMtb25seQ==
+    expiration-ms: 86400000
