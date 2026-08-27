@@ -71,7 +71,7 @@ git push origin develop
    - **Region**: Oregon (US West)
    - **Plan**: Free
    - **Dockerfile Path**: `backend/Dockerfile`
-   - **Docker Context**: `.` (raiz del repo)
+   - **Docker Context**: `.` (raiz del repo, NO la carpeta backend)
 
 4. **Environment Variables** (agregar todas):
 
