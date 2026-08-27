@@ -4,11 +4,11 @@
 
 | Campo | Valor |
 |-------|-------|
-| **Version** | v1.0.0 |
-| **Fecha** | 2026-07-30 |
-| **Sprint Actual** | Sprint 06.1 (Hardening Final) — **COMPLETADO** |
-| **Estado** | **MVP COMPLETED** |
-| **Ready for** | Portfolio, Freelancing |
+| **Version** | v1.4.0 |
+| **Fecha** | 2026-08-23 |
+| **Sprint Actual** | Etapa 5 — Deploy — **EN PROCESO** |
+| **Estado** | **DEPLOYING** |
+| **Ready for** | Portfolio, Interviews, Freelancing, Deployment |
 
 ---
 
@@ -17,7 +17,12 @@
 | Sprint | Version | Estado |
 |--------|---------|--------|
 | Sprint 00-06 | v0.1.0 - v0.6.0 | Completado |
-| Sprint 06.1 | v1.0.0 | **COMPLETADO** |
+| Sprint 06.1 | v1.0.0 | Completado |
+| Etapa 1 Production Hardening | v1.1.0 | Completado |
+| Etapa 2 Environment & Config | v1.2.0 | Completado |
+| Etapa 3 Security Hardening | v1.3.0 | Completado |
+| Etapa 4 CI/CD | v1.4.0 | Completado |
+| Etapa 5 Deploy | — | **EN PROCESO** |
 
 ---
 
@@ -32,7 +37,12 @@
 | Sprint 03 | Contactos | Completado | v0.3.0 | 15 |
 | Sprint 04 | Mascotas | Completado | v0.4.0 | 8 |
 | Sprint 05 | Citas | Completado | v0.5.0 | 19 |
-| Sprint 06 | Dashboard | **COMPLETADO** | **v0.6.0** | **5** |
+| Sprint 06 | Dashboard | Completado | v0.6.0 | 5 |
+| Sprint 06.1 | Hardening Final | Completado | v1.0.0 | — |
+| Etapa 1 | JWT httpOnly Cookies | Completado | v1.1.0 | 8 |
+| Etapa 2 | Environment & Config | Completado | v1.2.0 | 6 |
+| Etapa 3 | Security Hardening | Completado | v1.3.0 | 10 |
+| Etapa 4 | CI/CD | **COMPLETADO** | **v1.4.0** | **5** |
 
 ---
 
@@ -56,16 +66,18 @@
 |------|------------|---------|
 | Backend | Java | 17 |
 | Backend | Spring Boot | 3.5.4 |
+| Backend | springdoc-openapi | 2.8.6 |
 | Frontend | React | 18.3.1 |
 | Frontend | TypeScript | 5.4.5 |
 | Frontend | Vite | 5.3.1 |
 | Frontend | TailwindCSS | 3.4.4 |
 | Frontend | react-big-calendar | latest |
 | Frontend | date-fns | latest |
-| Base de datos | PostgreSQL | 16 |
+| Base de datos | PostgreSQL | 18.6 |
 | Migraciones | Flyway | (via Spring Boot) |
 | Estado global | Zustand | 4.5.2 |
 | Seguridad | Spring Security + JWT | jjwt 0.12.6 |
+| API Docs | springdoc-openapi | 2.8.6 |
 
 ---
 
@@ -143,19 +155,21 @@ frontend/src/
 
 | Metrica | Valor |
 |---------|-------|
-| Tests backend | 52/52 PASS |
-| DashboardService tests | 4/4 PASS |
-| AppointmentService tests | 13/13 PASS |
-| PetService tests | 13/13 PASS |
-| ContactService tests | 10/10 PASS |
-| AuthService tests | 5/5 PASS |
-| JwtUtil tests | 6/6 PASS |
-| Context load test | 1/1 PASS |
-| Tests frontend | 6/6 PASS |
+| Tests backend | 68/68 PASS |
+| Tests frontend | 43/43 PASS |
 | Frontend lint | 0 errors |
 | Frontend typecheck | PASS |
-| Frontend build | PASS (1534 modules) |
-| Rate limiting | Implementado (5/min/IP) |
+| Frontend build | PASS (1533 modules, 473KB gzip: 148KB) |
+| Backend build | PASS (syncria-backend-1.3.0.jar) |
+| PostgreSQL | 18.6 nativo (12 constraints, 19 indexes) |
+| Flyway migrations | V1-V4 aplicadas |
+| Swagger/OpenAPI | Integrado (springdoc-openapi 2.8.6) |
+| npm vulnerabilities | 4 moderadas (requieren breaking changes) |
+| Rate limiting | Generalizado (auth: 5, CRUD: 60, dashboard: 30 req/min/IP) |
+| Rate limiting por email | Implementado (5 intentos fallidos por email) |
+| CSP headers | Implementado (default-src 'self', frame-ancestors 'none') |
+| Security logging | Implementado (tokens inválidos, 401/403, rate limits) |
+| Cookie domain | Configurable via COOKIE_DOMAIN env var |
 | Soft-delete check | Verificado en JWT filter |
 | JWT cache | TTL 5 minutos |
 | Session persistence | Zustand persist middleware |
@@ -168,17 +182,7 @@ frontend/src/
 
 ---
 
-## Deferred Items (20% Restante)
-
-### Sprint 06.1 — Hardening (Prioridad Alta)
-
-| Item | Prioridad | Descripcion |
-|------|-----------|-------------|
-| Docker + PostgreSQL real | HIGH | Instalar Docker Desktop, verificar conexion real |
-| Tests frontend | HIGH | Tests para ContactStore, PetStore, AppointmentStore, DashboardStore |
-| Swagger/OpenAPI | MEDIUM | Integrar springdoc-openapi |
-| README profesional | MEDIUM | Capturas, badges, guia completa |
-| Token sync | MEDIUM | Sincronizar api.ts con Zustand store |
+## Deferred Items (Sprint 07+)
 
 ### Sprint 07 — Deploy + Beta (Prioridad Media)
 
@@ -196,7 +200,6 @@ frontend/src/
 |------|-----------|-------------|
 | Sentry | MEDIUM | Error tracking |
 | Monitoring | LOW | Uptime + metrics |
-| httpOnly cookies | LOW | Migrar JWT de localStorage |
 | Rate limiting global | LOW | No solo en /login |
 | Landing page | LOW | Pagina de marketing |
 
@@ -204,25 +207,25 @@ frontend/src/
 
 ## Conocido / Limitaciones
 
-- Token JWT en localStorage (riesgo XSS aceptado para MVP)
-- Frontend tests limitados (solo Button)
-- Sin Docker funcional (falta Docker Desktop)
-- Tests corren con H2 in-memory
+- 4 vulnerabilidades npm moderadas (requieren Vite 8 / react-router-dom 7)
+- Docker Desktop CLI instalado pero daemon no corriendo
+- PostgreSQL 18.6 nativo (Flyway warning: max soportado 17, funciona OK)
 - Sin CI/CD pipeline
-- Sin observabilidad
+- Sin observabilidad (Sentry, monitoring)
 
 ---
 
 ## Proximos Pasos
 
-1. **Sprint 06.1 (Hardening)**: Docker, tests frontend, Swagger, README
-2. **Sprint 07 (Beta)**: Deploy, beta testing, feedback
-3. **Sprint 08 (Launch)**: Produccion publica
+1. **Sprint 07 (Deploy)**: Deploy backend (Railway/Render) + frontend (Vercel/Netlify), CI/CD con GitHub Actions
+2. **Sprint 08 (Beta)**: Beta testing con veterinarios, feedback, iteracion
+3. **Sprint 09 (Launch)**: Produccion publica, dominio, HTTPS, observabilidad
 
 ---
 
-*PROJECT_STATUS.md - Syncria v1.0.0*
-*Estado: MVP COMPLETED*
+*PROJECT_STATUS.md - Syncria v1.3.0*
+*Estado: PRODUCTION READY*
 *READY FOR PORTFOLIO*
+*READY FOR INTERVIEWS*
 *READY FOR FREELANCING*
-*Ultima actualizacion: 2026-07-30*
+*Ultima actualizacion: 2026-08-23*

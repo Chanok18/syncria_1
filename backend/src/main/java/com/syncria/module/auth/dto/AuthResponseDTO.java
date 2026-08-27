@@ -5,4 +5,8 @@ public record AuthResponseDTO(
         String email,
         String fullName,
         String role
-) {}
+) {
+    public AuthResponseDTO withoutToken() {
+        return new AuthResponseDTO(null, email, fullName, role);
+    }
+}

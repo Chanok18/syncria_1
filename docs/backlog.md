@@ -14,7 +14,7 @@
 - [x] US-009: Crear cita
 - [x] US-010: Ver calendario
 - [x] US-011: Editar/cancelar cita
-- [ ] US-012: Ver dashboard
+- [x] US-012: Ver dashboard
 
 ### Should Have (Post-MVP cercano)
 - [ ] US-013: Busqueda avanzada de clientes
@@ -291,7 +291,7 @@ PARA mantener mi agenda actualizada
 **Prioridad**: Must Have
 **Estimacion**: 5 puntos
 **Sprint**: 6
-**Estado**: En Progreso
+**Estado**: Completado
 
 **Descripcion**:
 COMO veterinario
@@ -318,8 +318,8 @@ PARA tener visibilidad de mis operaciones
 | 3 | 15 | US-003, US-004, US-005, US-006 | Completado |
 | 4 | 8 | US-007, US-008 | Completado |
 | 5 | 19 | US-009, US-010, US-011 | Completado |
-| 6 | 5 | US-012 | En Progreso |
-| **Total** | **75** | **12 historias** | **60 completados** |
+| 6 | 5 | US-012 | Completado |
+| **Total** | **75** | **12 historias** | **75 completados** |
 
 ## Definicion de Done (DoD)
 
@@ -336,5 +336,5 @@ Una historia de usuario esta completa cuando:
 
 ---
 
-*Product Backlog - Syncria v0.5.0*
-*Ultima actualizacion: 2026-07-30*
+*Product Backlog - Syncria v1.0.0*
+*Ultima actualizacion: 2026-08-23*

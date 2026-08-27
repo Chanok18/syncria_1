@@ -6,6 +6,157 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/).
 
 ---
 
+## [1.4.0] - 2026-08-23
+
+### Etapa 4: CI/CD + Deployment Prep
+
+#### Added (Agregado)
+- **GitHub Actions Backend** (`.github/workflows/backend.yml`)
+  - Tests automáticos en push/PR a develop y main
+  - JDK 17 + Temurin + Maven cache
+  - Build verificado después de tests
+
+- **GitHub Actions Frontend** (`.github/workflows/frontend.yml`)
+  - Tests, lint, typecheck, build en paralelo
+  - Node.js 20 + npm cache
+  - Verificación completa del frontend
+
+- **Deployment Configs**
+  - `backend/Dockerfile` - Multi-stage build para Spring Boot
+  - `frontend/Dockerfile` - Multi-stage build con Nginx
+  - `frontend/nginx.conf` - Configuración Nginx para SPA
+  - `render.yaml` - Infrastructure as Code para Render
+  - `docs/DEPLOY_RENDER.md` - Guía completa de deployment
+
+#### Changed (Cambiado)
+- `frontend/src/lib/api.ts` - Soporte para `VITE_API_URL` en producción
+- README.md actualizado con estado v1.4.0
+- AGENTS.md actualizado con contexto CI/CD
+
+---
+
+## [1.3.0] - 2026-08-23
+
+### Etapa 3: Security Hardening
+
+#### Added (Agregado)
+- **Rate Limiting Generalizado** (RateLimitingFilter.java)
+  - Auth endpoints (login, register): 5 req/min/IP
+  - CRUD endpoints (contacts, pets, appointments): 60 req/min/IP
+  - Dashboard endpoint: 30 req/min/IP
+  - Rate limiting por email en login: 5 intentos fallidos por email
+
+- **Content Security Policy (CSP)** (SecurityConfig.java)
+  - default-src 'self'
+  - script-src 'self'
+  - style-src 'self' 'unsafe-inline' (necesario para TailwindCSS)
+  - img-src 'self' data:
+  - font-src 'self'
+  - connect-src 'self'
+  - frame-ancestors 'none'
+  - base-uri 'self'
+  - form-action 'self'
+
+- **Security Headers** (SecurityConfig.java)
+  - X-Content-Type-Options: nosniff
+  - X-Frame-Options: DENY
+  - X-XSS-Protection: 1; mode=block
+  - Strict-Transport-Security: max-age=31536000; includeSubDomains
+  - Referrer-Policy: strict-origin-when-cross-origin
+
+- **Security Logging**
+  - JwtAuthenticationFilter: log.debug para tokens inválidos
+  - GlobalExceptionHandler: log.info para 401, log.warn para 403
+  - RateLimitingFilter: log.warn para rate limits excedidos
+
+- **Cookie Domain Configurable** (AuthController.java)
+  - app.jwt.cookie-domain configurable en application-*.yml
+  - Vacío por defecto (funciona en localhost)
+  - Configurable para producción (ej: syncria.app)
+
+- **DTO Validations**
+  - ContactRequestDTO.notes: @Size(max=1000)
+  - PetRequestDTO.notes: @Size(max=1000)
+  - AppointmentRequestDTO.reason: @Size(max=500)
+  - AppointmentRequestDTO.notes: @Size(max=1000)
+
+#### Tests
+- RateLimitingFilterTest (10 tests): auth/CRUD/dashboard rate limits, email rate limiting, IP separation
+- SecurityHeadersTest (6 tests): CSP, X-Content-Type-Options, X-Frame-Options, X-XSS-Protection, Referrer-Policy
+
+#### Changed (Cambiado)
+- RateLimitingFilter: Generalizado con thresholds configurables por tipo de endpoint
+- SecurityConfig: Agregados CSP, Referrer-Policy headers
+- AuthController: Inyectado RateLimitingFilter para rate limiting por email
+- GlobalExceptionHandler: Agregado logging con @Slf4j
+
+---
+
+## [1.2.0] - 2026-08-23
+
+### Etapa 2: Environment & Production Configuration
+
+#### Added (Agregado)
+- **Security Headers** (SecurityConfig.java)
+  - X-Content-Type-Options: nosniff
+  - X-Frame-Options: DENY
+  - X-XSS-Protection: 1; mode=block
+  - Strict-Transport-Security: max-age=31536000; includeSubDomains
+
+- **CORS Production** (application-prod.yml)
+  - CORS_ALLOWED_ORIGINS ahora es obligatorio en producción (sin default inválido)
+
+- **Documentation Updates**
+  - docs/ARCHITECTURE.md: API Client section actualizado con cookies httpOnly
+  - README.md: JWT localStorage removido de limitaciones
+  - PROJECT_STATUS.md: httpOnly cookies marcado como completado
+  - CHANGELOG.md: Etapa 1 agregada
+  - FINAL_AUDIT.md: scores actualizados (Security 7.5/10, Documentation 8.5/10)
+
+- **Environment Variables** (.env.example)
+  - Comentarios actualizados con instrucciones de generación de JWT_SECRET
+
+#### Security
+- CORS en producción requiere variable de entorno explícita
+- Security headers habilitados para proteger contra XSS, clickjacking, MIME sniffing
+- HSTS habilitado con max-age de 1 año
+
+---
+
+## [1.1.0] - 2026-08-23
+
+### Etapa 1: Production Hardening — JWT httpOnly Cookies
+
+#### Added (Agregado)
+- **Backend**
+  - `AuthController`: login/register establecen cookie httpOnly "token"
+  - `AuthController`: nuevo endpoint `/logout` limpia la cookie
+  - `AuthResponseDTO`: método `withoutToken()` para respuestas sin JWT
+  - `JwtAuthenticationFilter`: busca JWT primero en cookie, fallback a Authorization header
+  - `application-prod.yml`: cookie secure, CORS configurable, Swagger deshabilitado
+  - `application-dev.yml`: configuración de cookies agregada
+
+- **Frontend**
+  - `api.ts`: eliminado interceptor Authorization, withCredentials=true, manejo de 401
+  - `authStore.ts`: eliminado persist middleware, eliminado token del estado
+  - `authStore.ts`: logout async, initializeSession()
+  - `types.ts`: AuthResponse ya no contiene token
+  - `ProtectedRoute.tsx`: usa user, espera inicialización
+  - `Header.tsx`: logout async
+  - `App.tsx`: initializeSession() al montar
+
+#### Changed (Cambiado)
+- JWT migrado de localStorage a cookies httpOnly
+- Flujo: Login → cookie → request automático → /auth/me para refresh
+- Documentación actualizada (ARCHITECTURE.md, README.md, PROJECT_STATUS.md)
+
+#### Security
+- JWT ya no se almacena en localStorage (mitiga riesgo XSS)
+- Cookie configurada con httpOnly, secure (prod), SameSite=Lax
+- withCredentials=true en Axios para envío automático de cookies
+
+---
+
 ## [0.3.0] - 2026-07-29
 
 ### Sprint 3: Contactos

@@ -20,6 +20,7 @@ public record AppointmentRequestDTO(
         @Size(max = 255, message = "Title must be at most 255 characters")
         String title,
 
+        @Size(max = 500, message = "Reason must be at most 500 characters")
         String reason,
 
         @NotNull(message = "Date is required")
@@ -34,6 +35,7 @@ public record AppointmentRequestDTO(
 
         AppointmentStatus status,
 
+        @Size(max = 1000, message = "Notes must be at most 1000 characters")
         String notes
 ) {
 }

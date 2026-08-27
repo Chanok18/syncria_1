@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { Routes, Route } from 'react-router-dom'
 import MainLayout from './layouts/MainLayout'
 import LoginPage from './features/auth/components/LoginPage'
@@ -9,8 +10,15 @@ import ContactFormPage from './features/contacts/components/ContactFormPage'
 import PetListPage from './features/pets/components/PetListPage'
 import PetFormPage from './features/pets/components/PetFormPage'
 import AppointmentCalendar from './features/appointments/components/AppointmentCalendar'
+import { useAuthStore } from './features/auth/store/authStore'
 
 function App() {
+  const initializeSession = useAuthStore((s) => s.initializeSession)
+
+  useEffect(() => {
+    initializeSession()
+  }, [initializeSession])
+
   return (
     <Routes>
       <Route path="/login" element={<LoginPage />} />

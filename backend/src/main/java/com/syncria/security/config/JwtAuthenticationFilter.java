@@ -37,17 +37,21 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     FilterChain filterChain) throws ServletException, IOException {
         String token = extractToken(request);
 
-        if (StringUtils.hasText(token) && jwtUtil.validateToken(token)) {
-            String email = jwtUtil.extractEmail(token);
-            User user = getUserCached(email);
+        if (StringUtils.hasText(token)) {
+            if (jwtUtil.validateToken(token)) {
+                String email = jwtUtil.extractEmail(token);
+                User user = getUserCached(email);
 
-            if (user != null && !user.getDeleted()
-                    && SecurityContextHolder.getContext().getAuthentication() == null) {
-                var authorities = List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole()));
-                var authentication = new UsernamePasswordAuthenticationToken(
-                        user, null, authorities);
-                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(authentication);
+                if (user != null && !user.getDeleted()
+                        && SecurityContextHolder.getContext().getAuthentication() == null) {
+                    var authorities = List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole()));
+                    var authentication = new UsernamePasswordAuthenticationToken(
+                            user, null, authorities);
+                    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                }
+            } else {
+                log.debug("Invalid JWT token rejected for request: {}", request.getRequestURI());
             }
         }
 
@@ -69,6 +73,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     private String extractToken(HttpServletRequest request) {
+        jakarta.servlet.http.Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (jakarta.servlet.http.Cookie cookie : cookies) {
+                if ("token".equals(cookie.getName())) {
+                    String value = cookie.getValue();
+                    if (StringUtils.hasText(value)) {
+                        return value;
+                    }
+                }
+            }
+        }
+
         String header = request.getHeader("Authorization");
         if (StringUtils.hasText(header) && header.startsWith("Bearer ")) {
             return header.substring(7);

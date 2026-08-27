@@ -5,7 +5,7 @@
 ```
 Fase 0: Product Discovery    ← Completado
 Fase 1: System Architecture  ← Completado
-Fase 2: MVP Development      ← EN PROGRESO (Sprint 5 completado, Sprint 6 activo)
+Fase 2: MVP Development      ← Completado (v1.0.0)
 Fase 3: Beta Testing
 Fase 4: Launch
 Fase 5: Growth & Iteration
@@ -90,11 +90,11 @@ Fase 5: Growth & Iteration
 
 #### Sprint 6: Dashboard (Semana 15)
 **Objetivo**: Dashboard y pulido final del MVP
-**Estado**: EN PROGRESO (v0.6.0)
+**Estado**: Completado (v0.6.0)
 
 | Historia | Puntos | Estado |
 |----------|--------|--------|
-| US-012: Ver Dashboard | 5 | En Progreso |
+| US-012: Ver Dashboard | 5 | Completado |
 
 ---
 
@@ -134,8 +134,8 @@ Sprint 2.1(v0.2.1): Hardening       │█████████████�
 Sprint 3 (v0.3.0):  Contactos       │████████████████████│ Completado (15 pts)
 Sprint 4 (v0.4.0):  Mascotas        │████████████████████│ Completado (8 pts)
 Sprint 5 (v0.5.0):  Citas           │████████████████████│ Completado (19 pts)
-Sprint 6 (v0.6.0):  Dashboard       │░░░░░░░░░░░░░░░░░░░░│ En Progreso (5 pts)
-                                    Total: 75 pts (60 completados)
+Sprint 6 (v0.6.0):  Dashboard       │████████████████████│ Completado (5 pts)
+                                    Total: 75 pts (75 completados)
 ```
 
 ## Hitos Clave
@@ -150,8 +150,8 @@ Sprint 6 (v0.6.0):  Dashboard       │░░░░░░░░░░░░░�
 | Contactos | Semana 10 | Completado |
 | Mascotas | Semana 12 | Completado |
 | Citas | Semana 14 | Completado |
-| Dashboard | Semana 15 | En Progreso |
-| MVP completo | Semana 15 | Pendiente |
+| Dashboard | Semana 15 | Completado |
+| MVP completo | Semana 15 | Completado |
 | Beta cerrada | Semana 19 | Pendiente |
 | Launch publico | Semana 20 | Pendiente |
 
@@ -166,5 +166,5 @@ Sprint 6 (v0.6.0):  Dashboard       │░░░░░░░░░░░░░�
 
 ---
 
-*Roadmap - Syncria v0.5.0*
-*Ultima actualizacion: 2026-07-30*
+*Roadmap - Syncria v1.0.0*
+*Ultima actualizacion: 2026-08-23*

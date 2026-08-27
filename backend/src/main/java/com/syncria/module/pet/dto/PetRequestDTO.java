@@ -26,6 +26,7 @@ public record PetRequestDTO(
         @Size(max = 20, message = "Gender must be at most 20 characters")
         String gender,
 
+        @Size(max = 1000, message = "Notes must be at most 1000 characters")
         String notes
 ) {
 }

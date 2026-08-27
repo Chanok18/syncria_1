@@ -5,7 +5,7 @@ spring:
   application:
     name: syncria-backend
   profiles:
-    active: dev
+    active: ${SPRING_PROFILES_ACTIVE:dev}
 
   jpa:
     hibernate:

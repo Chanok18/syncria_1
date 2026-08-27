@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/syncria_db
+    url: jdbc:postgresql://127.0.0.1:5432/syncria_db
     username: syncria_user
     password: secret
     driver-class-name: org.postgresql.Driver
@@ -17,3 +17,9 @@ app:
   jwt:
     secret: ZGV2LW9ubHktand0LXNlY3JldC1mb3ItbG9jYWwtZGV2ZWxvcG1lbnQtcHVycG9zZXMtb25seQ==
     expiration-ms: 86400000
+    cookie-max-age: 86400
+    cookie-secure: false
+    cookie-domain:
+
+  cors:
+    allowed-origins: http://localhost:5173

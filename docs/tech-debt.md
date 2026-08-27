@@ -65,9 +65,9 @@ Registro de deuda tecnica acumulada y pendiente de resolver.
 
 ### TD-009: Docker Desktop Pendiente
 - **Problema**: Docker no disponible en el entorno de desarrollo actual.
-- **Impacto**: No se puede verificar conexion PostgreSQL ni flujo completo.
-- **Solucion**: Instalar Docker Desktop o usar WSL2.
-- **Estado**: DEFERRED (Sprint 06.1)
+- **Impacto**: PostgreSQL 18 nativo disponible y funcionando. Docker no es critico para desarrollo local.
+- **Solucion**: Instalar Docker Desktop o usar WSL2 (futuro, no bloqueante).
+- **Estado**: RESUELTO (PostgreSQL nativo funciona)
 - **Prioridad**: LOW
 
 ### TD-010: Tests Frontend Limitados
@@ -105,4 +105,4 @@ Registro de deuda tecnica acumulada y pendiente de resolver.
 ---
 
 *Tech Debt — Syncria*
-*Ultima actualizacion: 2026-07-30*
+*Ultima actualizacion: 2026-08-23*

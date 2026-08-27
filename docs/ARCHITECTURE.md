@@ -180,13 +180,10 @@ interface ContactState {
 
 ```typescript
 // lib/api.ts
-const api = axios.create({ baseURL: '/api/v1' })
-
-// Interceptor: agrega JWT a cada request
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token')
-  if (token) config.headers.Authorization = `Bearer ${token}`
-  return config
+const api = axios.create({
+  baseURL: '/api/v1',
+  withCredentials: true,  // Envía cookies httpOnly automáticamente
+  headers: { 'Content-Type': 'application/json' }
 })
 
 // Interceptor: redirige a /login en 401
@@ -194,13 +191,18 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      localStorage.removeItem('token')
       window.location.href = '/login'
     }
     return Promise.reject(error)
   }
 )
 ```
+
+**Flujo de autenticación:**
+1. Login → backend establece cookie httpOnly "token"
+2. Requests → navegador envía cookie automáticamente (withCredentials: true)
+3. JwtAuthenticationFilter → extrae JWT desde cookie
+4. Logout → backend elimina cookie
 
 ---
 

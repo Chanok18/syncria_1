@@ -55,6 +55,8 @@ build/
 .env
 .env.local
 .env.*.local
+frontend/.env.development
+frontend/.env.production
 
 # --------------------
 # IDE / EDITOR
