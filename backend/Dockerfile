@@ -11,6 +11,9 @@ COPY backend/mvnw .
 COPY backend/.mvn .mvn
 COPY backend/pom.xml .
 
+# Fix mvnw permission
+RUN chmod +x ./mvnw
+
 # Download dependencies (cached unless pom.xml changes)
 RUN ./mvnw dependency:go-offline -B
 
