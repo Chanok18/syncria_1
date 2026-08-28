@@ -21,8 +21,13 @@ export const useDashboardStore = create<DashboardState>((set) => ({
     try {
       const response = await api.get<DashboardData>('/dashboard')
       set({ data: response.data })
-    } catch {
-      set({ error: 'Failed to load dashboard data' })
+    } catch (err: unknown) {
+      let msg = 'Failed to load dashboard data'
+      if (err instanceof Object && err !== null && 'response' in err) {
+        const axiosErr = err as { response?: { status?: number, data?: unknown } }
+        msg = `Dashboard error ${axiosErr.response?.status || ''}`
+      }
+      set({ error: msg })
     } finally {
       set({ isLoading: false })
     }

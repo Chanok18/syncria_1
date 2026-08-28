@@ -59,19 +59,14 @@ public class AuthController {
 
     @PostMapping("/logout")
     public ResponseEntity<Void> logout(HttpServletResponse response) {
-        String domain = cleanDomain(cookieDomain);
-        ResponseCookie.ResponseCookieBuilder builder = ResponseCookie.from("token", "")
+        ResponseCookie cookie = ResponseCookie.from("token", "")
                 .httpOnly(true)
-                .secure(cookieSecure)
-                .sameSite("Lax")
+                .secure(true)
+                .sameSite("None")
                 .path("/")
-                .maxAge(0);
-
-        if (domain != null && !domain.isBlank()) {
-            builder.domain(domain);
-        }
-
-        response.addHeader(HttpHeaders.SET_COOKIE, builder.build().toString());
+                .maxAge(0)
+                .build();
+        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
         return ResponseEntity.noContent().build();
     }
 
@@ -93,15 +88,10 @@ public class AuthController {
     private void addTokenCookie(HttpServletResponse response, String token) {
         ResponseCookie.ResponseCookieBuilder builder = ResponseCookie.from("token", token)
                 .httpOnly(true)
-                .secure(cookieSecure)
-                .sameSite("Lax")
+                .secure(true)
+                .sameSite("None")
                 .path("/")
                 .maxAge(cookieMaxAge);
-
-        String domain = cleanDomain(cookieDomain);
-        if (domain != null && !domain.isBlank()) {
-            builder.domain(domain);
-        }
 
         response.addHeader(HttpHeaders.SET_COOKIE, builder.build().toString());
     }
