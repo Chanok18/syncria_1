@@ -59,24 +59,19 @@ public class AuthController {
 
     @PostMapping("/logout")
     public ResponseEntity<Void> logout(HttpServletResponse response) {
-        ResponseCookie cookie = ResponseCookie.from("token", "")
+        String domain = cleanDomain(cookieDomain);
+        ResponseCookie.ResponseCookieBuilder builder = ResponseCookie.from("token", "")
                 .httpOnly(true)
                 .secure(cookieSecure)
                 .sameSite("Lax")
                 .path("/")
-                .maxAge(0)
-                .build();
-        if (cookieDomain != null && !cookieDomain.isBlank()) {
-            cookie = ResponseCookie.from("token", "")
-                    .httpOnly(true)
-                    .secure(cookieSecure)
-                    .sameSite("Lax")
-                    .path("/")
-                    .domain(cookieDomain)
-                    .maxAge(0)
-                    .build();
+                .maxAge(0);
+
+        if (domain != null && !domain.isBlank()) {
+            builder.domain(domain);
         }
-        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+
+        response.addHeader(HttpHeaders.SET_COOKIE, builder.build().toString());
         return ResponseEntity.noContent().build();
     }
 
@@ -103,10 +98,16 @@ public class AuthController {
                 .path("/")
                 .maxAge(cookieMaxAge);
 
-        if (cookieDomain != null && !cookieDomain.isBlank()) {
-            builder.domain(cookieDomain);
+        String domain = cleanDomain(cookieDomain);
+        if (domain != null && !domain.isBlank()) {
+            builder.domain(domain);
         }
 
         response.addHeader(HttpHeaders.SET_COOKIE, builder.build().toString());
+    }
+
+    private String cleanDomain(String domain) {
+        if (domain == null) return null;
+        return domain.replace("https://", "").replace("http://", "").replace("/", "").trim();
     }
 }
