@@ -41,10 +41,11 @@ export const useAuthStore = create<AuthState>()((set) => ({
       const response = await api.post<AuthResponse>('/auth/register', data)
       set({ user: response.data, isLoading: false, error: null })
     } catch (err: unknown) {
-      const message =
-        (err instanceof Object && err !== null && 'response' in err)
-          ? (err as { response?: { data?: { message?: string } } }).response?.data?.message || 'Registration failed'
-          : 'Registration failed'
+      let message = 'Registration failed'
+      if (err instanceof Object && err !== null && 'response' in err) {
+        const axiosErr = err as { response?: { data?: { message?: string }, status?: number } }
+        message = axiosErr.response?.data?.message || `Error ${axiosErr.response?.status || 'unknown'}`
+      }
       set({ error: message, isLoading: false })
       throw err
     }
