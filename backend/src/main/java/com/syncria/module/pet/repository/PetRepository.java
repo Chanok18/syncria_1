@@ -14,30 +14,19 @@ import java.util.Optional;
 @Repository
 public interface PetRepository extends JpaRepository<Pet, Long> {
 
-    @Query(
-        value = """
-                SELECT p FROM Pet p
-                WHERE p.companyId = :companyId
-                AND p.deleted = false
-                AND (:search IS NULL
-                     OR LOWER(p.name) LIKE LOWER(CONCAT('%', :search, '%'))
-                     OR LOWER(p.species) LIKE LOWER(CONCAT('%', :search, '%'))
-                     OR LOWER(p.breed) LIKE LOWER(CONCAT('%', :search, '%')))
-                """,
-        countQuery = """
-                SELECT COUNT(p) FROM Pet p
-                WHERE p.companyId = :companyId
-                AND p.deleted = false
-                AND (:search IS NULL
-                     OR LOWER(p.name) LIKE LOWER(CONCAT('%', :search, '%'))
-                     OR LOWER(p.species) LIKE LOWER(CONCAT('%', :search, '%'))
-                     OR LOWER(p.breed) LIKE LOWER(CONCAT('%', :search, '%')))
-                """
-    )
-    Page<Pet> findByCompanyIdAndSearch(
-            @Param("companyId") Long companyId,
-            @Param("search") String search,
-            Pageable pageable);
+    Page<Pet> findByCompanyIdAndDeletedFalse(Long companyId, Pageable pageable);
+
+    @Query("""
+            SELECT p FROM Pet p
+            WHERE p.companyId = :companyId
+            AND p.deleted = false
+            AND (LOWER(p.name) LIKE LOWER(CONCAT('%', :search, '%'))
+                 OR LOWER(p.species) LIKE LOWER(CONCAT('%', :search, '%'))
+                 OR LOWER(p.breed) LIKE LOWER(CONCAT('%', :search, '%')))
+            """)
+    Page<Pet> searchByCompanyId(@Param("companyId") Long companyId,
+                                @Param("search") String search,
+                                Pageable pageable);
 
     Optional<Pet> findByIdAndCompanyIdAndDeletedFalse(Long id, Long companyId);
 
