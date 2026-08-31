@@ -17,15 +17,26 @@ import java.util.Optional;
 @Repository
 public interface AppointmentRepository extends JpaRepository<Appointment, Long> {
 
-    @Query("""
-            SELECT a FROM Appointment a
-            WHERE a.companyId = :companyId
-            AND a.deleted = false
-            AND (:status IS NULL OR a.status = :status)
-            AND (:search IS NULL
-                 OR LOWER(a.title) LIKE LOWER(CONCAT('%', :search, '%'))
-                 OR LOWER(a.reason) LIKE LOWER(CONCAT('%', :search, '%')))
-            """)
+    @Query(
+        value = """
+                SELECT a FROM Appointment a
+                WHERE a.companyId = :companyId
+                AND a.deleted = false
+                AND (:status IS NULL OR a.status = :status)
+                AND (:search IS NULL
+                     OR LOWER(a.title) LIKE LOWER(CONCAT('%', :search, '%'))
+                     OR LOWER(a.reason) LIKE LOWER(CONCAT('%', :search, '%')))
+                """,
+        countQuery = """
+                SELECT COUNT(a) FROM Appointment a
+                WHERE a.companyId = :companyId
+                AND a.deleted = false
+                AND (:status IS NULL OR a.status = :status)
+                AND (:search IS NULL
+                     OR LOWER(a.title) LIKE LOWER(CONCAT('%', :search, '%'))
+                     OR LOWER(a.reason) LIKE LOWER(CONCAT('%', :search, '%')))
+                """
+    )
     Page<Appointment> findByCompanyIdAndFilters(
             @Param("companyId") Long companyId,
             @Param("status") AppointmentStatus status,
