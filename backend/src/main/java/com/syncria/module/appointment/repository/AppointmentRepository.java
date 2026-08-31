@@ -17,20 +17,33 @@ import java.util.Optional;
 @Repository
 public interface AppointmentRepository extends JpaRepository<Appointment, Long> {
 
+    Page<Appointment> findByCompanyIdAndDeletedFalse(Long companyId, Pageable pageable);
+
     @Query("""
             SELECT a FROM Appointment a
             WHERE a.companyId = :companyId
             AND a.deleted = false
-            AND (:status IS NULL OR a.status = :status)
-            AND (:search IS NULL
-                 OR LOWER(a.title) LIKE LOWER(CONCAT('%', :search, '%'))
+            AND (LOWER(a.title) LIKE LOWER(CONCAT('%', :search, '%'))
                  OR LOWER(a.reason) LIKE LOWER(CONCAT('%', :search, '%')))
             """)
-    Page<Appointment> findByCompanyIdAndFilters(
-            @Param("companyId") Long companyId,
-            @Param("status") AppointmentStatus status,
-            @Param("search") String search,
-            Pageable pageable);
+    Page<Appointment> searchByCompanyId(@Param("companyId") Long companyId,
+                                        @Param("search") String search,
+                                        Pageable pageable);
+
+    Page<Appointment> findByCompanyIdAndDeletedFalseAndStatus(Long companyId, AppointmentStatus status, Pageable pageable);
+
+    @Query("""
+            SELECT a FROM Appointment a
+            WHERE a.companyId = :companyId
+            AND a.deleted = false
+            AND a.status = :status
+            AND (LOWER(a.title) LIKE LOWER(CONCAT('%', :search, '%'))
+                 OR LOWER(a.reason) LIKE LOWER(CONCAT('%', :search, '%')))
+            """)
+    Page<Appointment> searchByCompanyIdAndStatus(@Param("companyId") Long companyId,
+                                                  @Param("status") AppointmentStatus status,
+                                                  @Param("search") String search,
+                                                  Pageable pageable);
 
     Optional<Appointment> findByIdAndCompanyIdAndDeletedFalse(Long id, Long companyId);
 

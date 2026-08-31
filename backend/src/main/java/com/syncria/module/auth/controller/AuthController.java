@@ -61,21 +61,11 @@ public class AuthController {
     public ResponseEntity<Void> logout(HttpServletResponse response) {
         ResponseCookie cookie = ResponseCookie.from("token", "")
                 .httpOnly(true)
-                .secure(cookieSecure)
-                .sameSite("Lax")
+                .secure(true)
+                .sameSite("None")
                 .path("/")
                 .maxAge(0)
                 .build();
-        if (cookieDomain != null && !cookieDomain.isBlank()) {
-            cookie = ResponseCookie.from("token", "")
-                    .httpOnly(true)
-                    .secure(cookieSecure)
-                    .sameSite("Lax")
-                    .path("/")
-                    .domain(cookieDomain)
-                    .maxAge(0)
-                    .build();
-        }
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
         return ResponseEntity.noContent().build();
     }
@@ -98,15 +88,16 @@ public class AuthController {
     private void addTokenCookie(HttpServletResponse response, String token) {
         ResponseCookie.ResponseCookieBuilder builder = ResponseCookie.from("token", token)
                 .httpOnly(true)
-                .secure(cookieSecure)
-                .sameSite("Lax")
+                .secure(true)
+                .sameSite("None")
                 .path("/")
                 .maxAge(cookieMaxAge);
 
-        if (cookieDomain != null && !cookieDomain.isBlank()) {
-            builder.domain(cookieDomain);
-        }
-
         response.addHeader(HttpHeaders.SET_COOKIE, builder.build().toString());
+    }
+
+    private String cleanDomain(String domain) {
+        if (domain == null) return null;
+        return domain.replace("https://", "").replace("http://", "").replace("/", "").trim();
     }
 }

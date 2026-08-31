@@ -30,6 +30,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -144,9 +145,24 @@ class AppointmentServiceTest {
     }
 
     @Test
-    void findAll_ShouldReturnPaginatedResults() {
+    void findAll_ShouldUseDerivedQuery_WhenNoFilters() {
         Appointment appointment = buildAppointment();
-        when(appointmentRepository.findByCompanyIdAndFilters(COMPANY_ID, null, "check", PageRequest.of(0, 20)))
+        when(appointmentRepository.findByCompanyIdAndDeletedFalse(COMPANY_ID, PageRequest.of(0, 20)))
+                .thenReturn(new PageImpl<>(List.of(appointment)));
+        when(petRepository.findById(PET_ID)).thenReturn(Optional.of(buildPet()));
+        when(contactRepository.findById(CONTACT_ID)).thenReturn(Optional.of(buildContact()));
+
+        Page<AppointmentResponseDTO> result = appointmentService.findAll(COMPANY_ID, null, null, PageRequest.of(0, 20));
+
+        assertThat(result.getContent()).hasSize(1);
+        assertThat(result.getContent().get(0).title()).isEqualTo("Checkup");
+        verify(appointmentRepository).findByCompanyIdAndDeletedFalse(COMPANY_ID, PageRequest.of(0, 20));
+    }
+
+    @Test
+    void findAll_ShouldUseSearchQuery_WhenSearchProvided() {
+        Appointment appointment = buildAppointment();
+        when(appointmentRepository.searchByCompanyId(COMPANY_ID, "check", PageRequest.of(0, 20)))
                 .thenReturn(new PageImpl<>(List.of(appointment)));
         when(petRepository.findById(PET_ID)).thenReturn(Optional.of(buildPet()));
         when(contactRepository.findById(CONTACT_ID)).thenReturn(Optional.of(buildContact()));
@@ -154,7 +170,35 @@ class AppointmentServiceTest {
         Page<AppointmentResponseDTO> result = appointmentService.findAll(COMPANY_ID, null, "check", PageRequest.of(0, 20));
 
         assertThat(result.getContent()).hasSize(1);
-        assertThat(result.getContent().get(0).title()).isEqualTo("Checkup");
+        verify(appointmentRepository).searchByCompanyId(COMPANY_ID, "check", PageRequest.of(0, 20));
+    }
+
+    @Test
+    void findAll_ShouldUseStatusQuery_WhenStatusProvided() {
+        Appointment appointment = buildAppointment();
+        when(appointmentRepository.findByCompanyIdAndDeletedFalseAndStatus(COMPANY_ID, AppointmentStatus.SCHEDULED, PageRequest.of(0, 20)))
+                .thenReturn(new PageImpl<>(List.of(appointment)));
+        when(petRepository.findById(PET_ID)).thenReturn(Optional.of(buildPet()));
+        when(contactRepository.findById(CONTACT_ID)).thenReturn(Optional.of(buildContact()));
+
+        Page<AppointmentResponseDTO> result = appointmentService.findAll(COMPANY_ID, AppointmentStatus.SCHEDULED, null, PageRequest.of(0, 20));
+
+        assertThat(result.getContent()).hasSize(1);
+        verify(appointmentRepository).findByCompanyIdAndDeletedFalseAndStatus(COMPANY_ID, AppointmentStatus.SCHEDULED, PageRequest.of(0, 20));
+    }
+
+    @Test
+    void findAll_ShouldUseSearchAndStatusQuery_WhenBothProvided() {
+        Appointment appointment = buildAppointment();
+        when(appointmentRepository.searchByCompanyIdAndStatus(COMPANY_ID, AppointmentStatus.SCHEDULED, "check", PageRequest.of(0, 20)))
+                .thenReturn(new PageImpl<>(List.of(appointment)));
+        when(petRepository.findById(PET_ID)).thenReturn(Optional.of(buildPet()));
+        when(contactRepository.findById(CONTACT_ID)).thenReturn(Optional.of(buildContact()));
+
+        Page<AppointmentResponseDTO> result = appointmentService.findAll(COMPANY_ID, AppointmentStatus.SCHEDULED, "check", PageRequest.of(0, 20));
+
+        assertThat(result.getContent()).hasSize(1);
+        verify(appointmentRepository).searchByCompanyIdAndStatus(COMPANY_ID, AppointmentStatus.SCHEDULED, "check", PageRequest.of(0, 20));
     }
 
     @Test

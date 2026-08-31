@@ -33,8 +33,13 @@ public class ContactService {
 
     @Transactional(readOnly = true)
     public Page<ContactResponseDTO> findAll(Long companyId, String search, Pageable pageable) {
-        return contactRepository.findByCompanyIdAndSearch(companyId, search, pageable)
-                .map(contactMapper::toResponse);
+        Page<Contact> page;
+        if (search == null || search.isBlank()) {
+            page = contactRepository.findByCompanyIdAndDeletedFalse(companyId, pageable);
+        } else {
+            page = contactRepository.searchByCompanyId(companyId, search, pageable);
+        }
+        return page.map(contactMapper::toResponse);
     }
 
     @Transactional(readOnly = true)

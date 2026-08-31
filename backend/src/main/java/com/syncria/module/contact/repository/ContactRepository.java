@@ -13,18 +13,18 @@ import java.util.Optional;
 @Repository
 public interface ContactRepository extends JpaRepository<Contact, Long> {
 
+    Page<Contact> findByCompanyIdAndDeletedFalse(Long companyId, Pageable pageable);
+
     @Query("""
             SELECT c FROM Contact c
             WHERE c.companyId = :companyId
             AND c.deleted = false
-            AND (:search IS NULL
-                 OR LOWER(c.name) LIKE LOWER(CONCAT('%', :search, '%'))
+            AND (LOWER(c.name) LIKE LOWER(CONCAT('%', :search, '%'))
                  OR LOWER(c.email) LIKE LOWER(CONCAT('%', :search, '%')))
             """)
-    Page<Contact> findByCompanyIdAndSearch(
-            @Param("companyId") Long companyId,
-            @Param("search") String search,
-            Pageable pageable);
+    Page<Contact> searchByCompanyId(@Param("companyId") Long companyId,
+                                    @Param("search") String search,
+                                    Pageable pageable);
 
     Optional<Contact> findByIdAndCompanyIdAndDeletedFalse(Long id, Long companyId);
 

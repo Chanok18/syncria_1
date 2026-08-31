@@ -23,6 +23,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -74,7 +75,26 @@ class ContactServiceTest {
     }
 
     @Test
-    void findAll_ShouldReturnPaginatedResults() {
+    void findAll_ShouldUseDerivedQuery_WhenSearchIsNull() {
+        Long companyId = 1L;
+        PageRequest pageable = PageRequest.of(0, 20);
+
+        Contact contact = Contact.builder()
+                .id(1L).companyId(companyId).name("John Doe")
+                .email("john@test.com").phone("123456789").build();
+        when(contactRepository.findByCompanyIdAndDeletedFalse(companyId, pageable))
+                .thenReturn(new PageImpl<>(List.of(contact)));
+
+        Page<ContactResponseDTO> result = contactService.findAll(companyId, null, pageable);
+
+        assertThat(result.getContent()).hasSize(1);
+        assertThat(result.getContent().get(0).name()).isEqualTo("John Doe");
+        verify(contactRepository).findByCompanyIdAndDeletedFalse(companyId, pageable);
+        verify(contactRepository, never()).searchByCompanyId(any(), any(), any());
+    }
+
+    @Test
+    void findAll_ShouldUseSearchQuery_WhenSearchProvided() {
         Long companyId = 1L;
         String search = "john";
         PageRequest pageable = PageRequest.of(0, 20);
@@ -82,21 +102,23 @@ class ContactServiceTest {
         Contact contact = Contact.builder()
                 .id(1L).companyId(companyId).name("John Doe")
                 .email("john@test.com").phone("123456789").build();
-        when(contactRepository.findByCompanyIdAndSearch(companyId, search, pageable))
+        when(contactRepository.searchByCompanyId(companyId, search, pageable))
                 .thenReturn(new PageImpl<>(List.of(contact)));
 
         Page<ContactResponseDTO> result = contactService.findAll(companyId, search, pageable);
 
         assertThat(result.getContent()).hasSize(1);
         assertThat(result.getContent().get(0).name()).isEqualTo("John Doe");
+        verify(contactRepository).searchByCompanyId(companyId, search, pageable);
+        verify(contactRepository, never()).findByCompanyIdAndDeletedFalse(any(), any());
     }
 
     @Test
     void findAll_ShouldReturnEmptyPage_WhenNoMatches() {
-        when(contactRepository.findByCompanyIdAndSearch(1L, "nonexistent", PageRequest.of(0, 20)))
+        when(contactRepository.findByCompanyIdAndDeletedFalse(1L, PageRequest.of(0, 20)))
                 .thenReturn(Page.empty());
 
-        Page<ContactResponseDTO> result = contactService.findAll(1L, "nonexistent", PageRequest.of(0, 20));
+        Page<ContactResponseDTO> result = contactService.findAll(1L, null, PageRequest.of(0, 20));
 
         assertThat(result.getContent()).isEmpty();
     }

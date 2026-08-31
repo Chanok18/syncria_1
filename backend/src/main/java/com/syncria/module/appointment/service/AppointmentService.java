@@ -66,12 +66,25 @@ public class AppointmentService {
 
     @Transactional(readOnly = true)
     public Page<AppointmentResponseDTO> findAll(Long companyId, AppointmentStatus status, String search, Pageable pageable) {
-        return appointmentRepository.findByCompanyIdAndFilters(companyId, status, search, pageable)
-                .map(a -> {
-                    Pet pet = petRepository.findById(a.getPetId()).orElse(null);
-                    Contact contact = contactRepository.findById(a.getContactId()).orElse(null);
-                    return enrichResponse(appointmentMapper.toResponse(a), pet, contact);
-                });
+        Page<Appointment> page;
+        boolean hasStatus = status != null;
+        boolean hasSearch = search != null && !search.isBlank();
+
+        if (!hasStatus && !hasSearch) {
+            page = appointmentRepository.findByCompanyIdAndDeletedFalse(companyId, pageable);
+        } else if (!hasStatus) {
+            page = appointmentRepository.searchByCompanyId(companyId, search, pageable);
+        } else if (!hasSearch) {
+            page = appointmentRepository.findByCompanyIdAndDeletedFalseAndStatus(companyId, status, pageable);
+        } else {
+            page = appointmentRepository.searchByCompanyIdAndStatus(companyId, status, search, pageable);
+        }
+
+        return page.map(a -> {
+            Pet pet = petRepository.findById(a.getPetId()).orElse(null);
+            Contact contact = contactRepository.findById(a.getContactId()).orElse(null);
+            return enrichResponse(appointmentMapper.toResponse(a), pet, contact);
+        });
     }
 
     @Transactional(readOnly = true)

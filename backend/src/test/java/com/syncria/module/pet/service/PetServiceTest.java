@@ -24,6 +24,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -101,26 +102,45 @@ class PetServiceTest {
     }
 
     @Test
-    void findAll_ShouldReturnPaginatedResults() {
+    void findAll_ShouldUseDerivedQuery_WhenSearchIsNull() {
         Long companyId = 1L;
         PageRequest pageable = PageRequest.of(0, 20);
 
         Pet pet = buildPet(1L, companyId, 10L);
-        when(petRepository.findByCompanyIdAndSearch(companyId, "buddy", pageable))
+        when(petRepository.findByCompanyIdAndDeletedFalse(companyId, pageable))
+                .thenReturn(new PageImpl<>(List.of(pet)));
+
+        Page<PetResponseDTO> result = petService.findAll(companyId, null, pageable);
+
+        assertThat(result.getContent()).hasSize(1);
+        assertThat(result.getContent().get(0).name()).isEqualTo("Buddy");
+        verify(petRepository).findByCompanyIdAndDeletedFalse(companyId, pageable);
+        verify(petRepository, never()).searchByCompanyId(any(), any(), any());
+    }
+
+    @Test
+    void findAll_ShouldUseSearchQuery_WhenSearchProvided() {
+        Long companyId = 1L;
+        PageRequest pageable = PageRequest.of(0, 20);
+
+        Pet pet = buildPet(1L, companyId, 10L);
+        when(petRepository.searchByCompanyId(companyId, "buddy", pageable))
                 .thenReturn(new PageImpl<>(List.of(pet)));
 
         Page<PetResponseDTO> result = petService.findAll(companyId, "buddy", pageable);
 
         assertThat(result.getContent()).hasSize(1);
         assertThat(result.getContent().get(0).name()).isEqualTo("Buddy");
+        verify(petRepository).searchByCompanyId(companyId, "buddy", pageable);
+        verify(petRepository, never()).findByCompanyIdAndDeletedFalse(any(), any());
     }
 
     @Test
     void findAll_ShouldReturnEmptyPage_WhenNoMatches() {
-        when(petRepository.findByCompanyIdAndSearch(1L, "nonexistent", PageRequest.of(0, 20)))
+        when(petRepository.findByCompanyIdAndDeletedFalse(1L, PageRequest.of(0, 20)))
                 .thenReturn(Page.empty());
 
-        Page<PetResponseDTO> result = petService.findAll(1L, "nonexistent", PageRequest.of(0, 20));
+        Page<PetResponseDTO> result = petService.findAll(1L, null, PageRequest.of(0, 20));
 
         assertThat(result.getContent()).isEmpty();
     }

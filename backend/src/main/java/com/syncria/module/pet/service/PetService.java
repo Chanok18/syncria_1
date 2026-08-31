@@ -39,8 +39,13 @@ public class PetService {
 
     @Transactional(readOnly = true)
     public Page<PetResponseDTO> findAll(Long companyId, String search, Pageable pageable) {
-        return petRepository.findByCompanyIdAndSearch(companyId, search, pageable)
-                .map(petMapper::toResponse);
+        Page<Pet> page;
+        if (search == null || search.isBlank()) {
+            page = petRepository.findByCompanyIdAndDeletedFalse(companyId, pageable);
+        } else {
+            page = petRepository.searchByCompanyId(companyId, search, pageable);
+        }
+        return page.map(petMapper::toResponse);
     }
 
     @Transactional(readOnly = true)
